@@ -105,11 +105,9 @@ internal class HelloTriangle : GameWindow
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         GL.BindVertexArray(0);
 
-        Console.WriteLine(Path.Combine(Environment.CurrentDirectory, "assets", "shader.vert"));
-
         _shader = new Shader(
-            Path.Combine(Environment.CurrentDirectory, "assets", "shader.vert"),
-            Path.Combine(Environment.CurrentDirectory, "assets", "shader.frag"));
+            Path.Combine(Environment.CurrentDirectory, "assets", "VertexShader.glsl"),
+            Path.Combine(Environment.CurrentDirectory, "assets", "FragmentShader.glsl"));
     }
 
     protected override void OnUnload()
@@ -124,8 +122,11 @@ internal class HelloTriangle : GameWindow
         GL.DeleteVertexArray(_vertexArrayRightTriangle);
         GL.DeleteBuffer(_vertexBufferRightTriangle);
 
-        _shader.Dispose();
+        _shader.Delete();
     }
+
+    private readonly float _velocity = 5.0f;
+    private float _xPos = 0.0f;
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
@@ -134,6 +135,16 @@ internal class HelloTriangle : GameWindow
         if (KeyboardState.IsKeyDown(Keys.Escape))
         {
             Close();
+        }
+
+        if (KeyboardState.IsKeyDown(Keys.A))
+        {
+            _xPos -= _velocity * (float)args.Time;
+        }
+
+        if (KeyboardState.IsKeyDown(Keys.D))
+        {
+            _xPos += _velocity * (float)args.Time;
         }
     }
 
@@ -150,6 +161,9 @@ internal class HelloTriangle : GameWindow
         _shader.Use();
 
         //GL.Uniform4(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
+
+        _shader.SetFloat1("xPos", _xPos);
 
         GL.BindVertexArray(_vertexArrayLeftTriangle);
         GL.DrawArrays(PrimitiveType.Triangles, 0, 3);

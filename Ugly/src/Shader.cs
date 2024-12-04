@@ -2,11 +2,14 @@
 
 namespace Ugly;
 
-// Сделать IDisposable
+// TODO: Можно закешировать uniform-ы, заранее пройдя по всем существующим
 
 public class Shader : IDisposable
 {
-    private readonly int _shaderProgram;
+    private int _program;
+    private bool _disposed;
+
+    private readonly Dictionary<string, int> _uniformLocations = new Dictionary<string, int>();
 
     public Shader(in string vertexShaderPath, in string fragmentShaderPath)
     {
@@ -37,30 +40,122 @@ public class Shader : IDisposable
         }
 
         // Link shaders
-        _shaderProgram = GL.CreateProgram();
-        GL.AttachShader(_shaderProgram, vertexShader);
-        GL.AttachShader(_shaderProgram, fragmentShader);
-        GL.LinkProgram(_shaderProgram);
+        _program = GL.CreateProgram();
+        GL.AttachShader(_program, vertexShader);
+        GL.AttachShader(_program, fragmentShader);
+        GL.LinkProgram(_program);
 
         // Check for linking errors
-        GL.GetProgram(_shaderProgram, GetProgramParameterName.LinkStatus, out success);
+        GL.GetProgram(_program, GetProgramParameterName.LinkStatus, out success);
         if (success != (int)All.True)
         {
-            string infoLog = GL.GetProgramInfoLog(_shaderProgram);
-            throw new Exception($"An error occurred whilst linking  program '{_shaderProgram}'.\n{infoLog}");
+            string infoLog = GL.GetProgramInfoLog(_program);
+            throw new Exception($"An error occurred whilst linking  program '{_program}'.\n{infoLog}");
         }
 
         GL.DeleteShader(vertexShader);
         GL.DeleteShader(fragmentShader);
     }
 
-    public void Use()
+    ~Shader()
     {
-        GL.UseProgram(_shaderProgram);
+        Dispose(false);
     }
 
     public void Dispose()
     {
-        GL.DeleteProgram(_shaderProgram);
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            // Освобождение управляемых ресурсов
+        }
+
+        // Освобождение неуправляемых ресурсов
+        if (_program != 0)
+        {
+            GL.DeleteProgram(_program);
+            _program = 0;
+        }
+
+        _disposed = true;
+    }
+
+    protected void CheckDisposed()
+    {
+        if (_disposed)
+        {
+            throw new ObjectDisposedException(nameof(Shader));
+        }
+    }
+
+    public void Use()
+    {
+        CheckDisposed();
+        GL.UseProgram(_program);
+    }
+
+    public void Delete()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected int GetUniformLocation(in string name)
+    {
+        if (!_uniformLocations.TryGetValue(name, out int uniformLocation))
+        {
+            uniformLocation = GL.GetUniformLocation(_program, name);
+            _uniformLocations.Add(name, uniformLocation);
+        }
+
+        return uniformLocation;
+    }
+
+    public void SetInt1(in string name, int value)
+    {
+        GL.Uniform1(GetUniformLocation(name), value);
+    }
+
+    public void SetInt2(in string name, int x, int y)
+    {
+        GL.Uniform2(GetUniformLocation(name), x, y);
+    }
+
+    public void SetInt3(in string name, int x, int y, int z)
+    {
+        GL.Uniform3(GetUniformLocation(name), x, y, z);
+    }
+
+    public void SetInt4(in string name, int x, int y, int z, int w)
+    {
+        GL.Uniform4(GetUniformLocation(name), x, y, z, w);
+    }
+
+    public void SetFloat1(in string name, float value)
+    {
+        GL.Uniform1(GetUniformLocation(name), value);
+    }
+
+    public void SetFloat2(in string name, float x, float y)
+    {
+        GL.Uniform2(GetUniformLocation(name), x, y);
+    }
+
+    public void SetFloat3(in string name, float x, float y, float z)
+    {
+        GL.Uniform3(GetUniformLocation(name), x, y, z);
+    }
+
+    public void SetFloat4(in string name, float x, float y, float z, float w)
+    {
+        GL.Uniform4(GetUniformLocation(name), x, y, z, w);
     }
 }
