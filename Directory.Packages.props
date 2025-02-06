@@ -6,5 +6,6 @@
   </PropertyGroup>
   <ItemGroup Label="Package versions for .NET 9.0" Condition=" '$(TargetFrameworkIdentifier)' == '.NETCoreApp' And $([MSBuild]::VersionEquals($(TargetFrameworkVersion), '9.0')) ">
     <PackageVersion Include="OpenTK" Version="4.9.3" />
+    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.6" />
   </ItemGroup>
 </Project>

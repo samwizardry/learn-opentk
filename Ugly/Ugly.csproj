@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTK" />
+    <PackageReference Include="SixLabors.ImageSharp" />
   </ItemGroup>
 
   <ItemGroup>

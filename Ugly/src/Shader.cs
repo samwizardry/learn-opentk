@@ -1,8 +1,9 @@
-﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Ugly;
 
 // TODO: Можно закешировать uniform-ы, заранее пройдя по всем существующим
+// TODO: опять забыл что такое in (in string str)
 
 public class Shader : IDisposable
 {

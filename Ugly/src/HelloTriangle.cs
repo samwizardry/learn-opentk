@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -48,7 +48,7 @@ internal class HelloTriangle : GameWindow
             {
                 Title = title,
                 ClientSize = (width, height),
-                Vsync = VSyncMode.On
+                Vsync = VSyncMode.Off
             })
     { }
 
@@ -146,6 +146,8 @@ internal class HelloTriangle : GameWindow
         {
             _xPos += _velocity * (float)args.Time;
         }
+
+        Console.WriteLine(args.Time);
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)
