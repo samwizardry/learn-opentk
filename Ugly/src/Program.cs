@@ -1,4 +1,4 @@
 using Ugly;
 
-using var game = new HelloTexture(800, 600, "Ugly");
+using var game = new HelloTexture(1280, 720, "Ugly");
 game.Run();

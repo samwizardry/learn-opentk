@@ -1,4 +1,5 @@
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace Ugly;
 
@@ -158,5 +159,15 @@ public class Shader : IDisposable
     public void SetFloat4(in string name, float x, float y, float z, float w)
     {
         GL.Uniform4(GetUniformLocation(name), x, y, z, w);
+    }
+
+    public void SetMat4(string name, int count, bool transpose, ref float value)
+    {
+        GL.UniformMatrix4(GetUniformLocation(name), count, transpose, ref value);
+    }
+
+    public void SetMat4(string name, bool transpose, ref Matrix4 mat)
+    {
+        GL.UniformMatrix4(GetUniformLocation(name), transpose, ref mat);
     }
 }
